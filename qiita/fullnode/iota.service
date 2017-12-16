@@ -1,0 +1,14 @@
+[Unit]
+Description=IOTA node
+After=network.target
+
+[Service]
+WorkingDirectory=/opt/iota
+ExecStart=/usr/bin/java -XX:+DisableAttachMechanism -jar /opt/iota/IRI.jar -p 14265 -c /opt/iota/iri.ini
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+Alias=iota.service

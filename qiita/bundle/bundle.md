@@ -1,5 +1,5 @@
-#title
-##sub
+# title
+## sub
 hello
 **bold**
 *itelic*

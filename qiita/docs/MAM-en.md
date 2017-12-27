@@ -206,7 +206,7 @@ Merkle Tree of MAM is generated from seed. (What a surprise that seed grows up t
 
 ![mam_merkle_1-2.png](https://qiita-image-store.s3.amazonaws.com/0/187795/06ea21b7-6427-90b4-1c82-4a64c53a0df1.png)
 
-　Leaf of the merkle tree, A",B",C",D" are hash(address). From leaf to root, hash of children nodes are merged into their parent node. Obviously, you cannot generate children nodes from parent.
+　Leaf of the merkle tree, A",B",C",D" are `=hash(address)`. From leaf to root, hash of children nodes are merged into their parent node. Obviously, you cannot generate children nodes from parent.
 
 ### Siblings
 　Let's say, leaf `A'` is given, to obtain root, you need to have all other leaves `B'C'D'`. But, if you cannot access to those, how do you get root? **Siblings** are the complimentary hashes that are necessary to generate `root` with given leaf. Look at the figure below.
@@ -224,31 +224,33 @@ Merkle Tree of MAM is generated from seed. (What a surprise that seed grows up t
 
 # Behind MAM - Signature and Approval
 　In this chapter, I'm going to merge two major topics discussed so far:
->1. nextChennelKeyで繋がるメッセージチェーン
+>1. Message Chain connected via nextChannelKey
 >2. Merkle Tree
 
 ## MAM.create
 source [here](https://github.com/iotaledger/mam.client.js/blob/master/lib/mam.js#L63)
-　まず、Aさんが初めてチャンネルを開設する際、Aさんは
->1. `channelKey`を一つ生成。
-2. 同じ`size`のMerkle Treeを`start`から２つ分生成。
+　Alice opens Channel. Alice then has to:
+>1. generate `channelKey`.
+>2. generate two Merkle Trees of same `size`. The first one starts with the index `start`.
 
-　Merkle Tree２つだが、どちらとも*Merkle Treeの生成*で説明した方法で作成する。１つ目`tree0`は`start0 = start`、`size0 = size`。２つ目`tree1`は`start1 = start0+size0`、`size1 = size0`。言い換えると生成されるPrivate Keyの連鎖で１つ目のMerkle Treeが使っていない次の部分を使う。下図参考。
+　The first tree namely `tree0`, has `start0 = start`,`size0 = size`. Second tree `tree1` starts with `start1 = srart0 + size0`, `size1 - size0`. Second tree uses next sequence of the private keys. Figure below.
+ 
 ![mam_2_double_merkle.png](https://qiita-image-store.s3.amazonaws.com/0/187795/67d5fc56-b28f-4d91-65c5-9a56b416d240.png)
-　MAM投稿の時、こうして生成された２つのMerkle Treeのうち`tree0`の木丸ごとと`tree1`の`root`（**nextRoot**）を引数にとる。また、**葉番号**という値を**0以上size未満**から選ぶ。今回は分かりやすく`leaf_index = 0`としよう。**葉番号**はMerkle Treeの葉の一番左から何番目を示す。`tree0`の葉番号0は`A'`、`tree1`の葉番号2は`G'`である。
-
-```java:MAM.createの例
-leaf_index = 0    // 葉番号
+　
+  When creating MAM,`tree0` itself and the root of `tree1`, namely `root_1`(**nextRoot**) is one of the parameters. And **leaf index** is chosen from **0 < i <size**. Let's say in this case, `leaf_index = 0`. Leaf index of the merkle tree is the distance from the most left leaf. leaf_index '0' of `tree0` is `A'`, leaf_index `2` of `tree1` is `G'`.
+  
+```java:example of MAM.create
+leaf_index = 0    // leaf index
 
 const mam = new MAM.create({
-    message: iota.utils.toTrytes(message),  // messageをトライトに変換
-    merkleTree: tree0,                      // １つ目のMerkle Tree
-    index: leaf_index,                      // 葉番号
-    nextRoot: tree1.root.hash.toString(),   // 次のroot。上図のroot_1。
-    channelKey: channelKey,                 // ChannelKey（このメッセージの暗号化に使われる。）
+    message: iota.utils.toTrytes(message),  // convert raw message to tryte
+    merkleTree: tree0,                      // the first merkle tree
+    index: leaf_index,                      // leaf index
+    nextRoot: tree1.root.hash.toString(),   // next root. root_1 above.
+    channelKey: channelKey,                 // ChannelKey, used to encrypt this whole message.
 });
 ```
-　`MAM.create`の中で行われることを次に説明する。
+ So, what's going to happen in MAM.create then?
 　まず、`tree0`の**Siblings**を求める。今回与えられる葉は先ほど決めた**葉番号**の葉とする。ということは`leaf_index = 0`なので`siblings`は`B"`と`Hash(C"D")`になる。
 ![mam_2_small_sib.png](https://qiita-image-store.s3.amazonaws.com/0/187795/d67e16e9-7ad9-d54e-4ba6-978af070fc0d.png)
 　次に、`messageTrytes`と呼ばれる**「nextRootと平文を足した文字列」**を署名されるデータとして**葉番号のPrivate Key**で署名を作る。署名作成については[こちら](https://qiita.com/ABmushi/items/422d1bf94be0c919583a#%E7%BD%B2%E5%90%8D%E3%81%AE%E6%96%B9%E6%B3%95)でも説明したが、それを踏まえて下図のように署名は作られる。

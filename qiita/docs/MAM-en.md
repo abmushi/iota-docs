@@ -184,51 +184,51 @@ iota.api.sendCommand({
 　Moreover, if the `message` exceeds the capacity(2187 trytes) of the `signatureFragment` of the Transaction, you don't need to make two different MAM messages and post twice as two messages on the message chain. You can just increase the number of transactions stored in the bundle and attach the bundle with long message as one MAM message. But, too long bundle may require too heavy PoW to attach it to the Tangle and it's also costly when retrieve it from the Tangle.
  
 # Behind MAM - Publishing
-　Now I'm going to talk about the forgotten aspect of the MAM, Channel Owner's Proof. Let's take a look at the case below.
+　Now I'm going to talk about the forgotten aspect of the MAM, Channel's ownership. Let's take a look at the case below.
 
  Alice has just published her first message on her channel and want Bob to read her post. So, Alice gave him her `channelKey`. Bob visited her message by generating address(=`messageID`) and decrypt it with `channelKey`. Bob enjoyed her post and thought "wanna read next!". And he has `nextChannelKey` in the decrypted current message, and can generate next address out of it. But, he realized that Alice hasn't published next message yet, at next `messageID`, there're no transactions made.
  Bob suddenly became evil. He has `nextChannelKey` and next `messageID`. He can post his message encrypted with `nextChannelKey` to the address `messageID`. And he could hijack Alice's channel.
  Do you think it would work? From information explained so far, there's no contradiction.
-...However, that's MAM's failure. Don't worry, MAM is designed so people like Bob cannot jumble up the channel. Next topic to cover is how Alice protects from using her message chain by anyone else.
+...However, that's MAM's failure. Don't worry, MAM is designed so people like Bob cannot jumble up the channel. Next topic to cover is how Alice keeps her message chain from being edited by anyone else.
 
-## チャンネルの所有権問題
-　さて、上の問題点を簡潔に述べると**Chaneel Keyの実装だけでは、AさんとBさんどちらがチャンネルの所有者か分からない**ということだ。
-　ここでIOTAにおける、アドレスの残高の所有権はどう証明したかを思い出してみよう。アドレスの残高を引き出す際には、Seedから生成される**Private Key**で[署名](https://qiita.com/ABmushi/items/422d1bf94be0c919583a#%E7%BD%B2%E5%90%8D%E3%81%AE%E6%96%B9%E6%B3%95)したトランザクションが承認されることで残高を引き出すことができた。
-　MAMではPrivate KeyをMerkle Treeと組み合わせることでチャンネルの所有権を証明するのに利用する。
+## Channel's ownnership
+　The problems mentioned above could simply be summarized as:**Chennel Key implimentation cannot identify who of Alice and Bob owns messages.**
+　Now recall how the address of IOTA is signed by its proper owner.ここでIOTAにおける、アドレスの残高の所有権はどう証明したかを思い出してみよう。アドレスの残高を引き出す際には、Seedから生成される**Private Key**で[署名](https://qiita.com/ABmushi/items/422d1bf94be0c919583a#%E7%BD%B2%E5%90%8D%E3%81%AE%E6%96%B9%E6%B3%95)したトランザクションが承認されることで残高を引き出すことができた。
+　MAM uses technic that utilizes both Private Key and Merkle Tree scheme to prove ownership of the channel.
 
 ## Merkle tree based signature scheme 
-　MAMにおける**Merkle Tree（マークル木）**を使った独特な署名方法について説明をしたい。[Merkle tree based signature scheme](https://www.imperialviolet.org/2013/07/18/hashsig.html)と言う技術らしいので興味ある人はリンク先を読んで見ると良い。
-　また、Merkle Treeというコンピューターサイエンスの専門用語についての解説は省略させていただく。というのも、Merkle Treeは暗号通貨界御用達の技術であり、ビットコイン価格の高騰とともに解説記事も爆発的に増えたため、わざわざここで説明し直す必要がないと判断したからだ。
-
+　[Merkle tree based signature scheme](https://www.imperialviolet.org/2013/07/18/hashsig.html) is the technic used in MAM.
+　But, I don't explain what the computer science term "Merkle Tree" is. Because since interests in Cryptos skyrocket, the idea of the merkle tree, which is the core module often seen in plenty of cryoto projects, is explained countless times at various places. You could just google it.
+ 
 ### Merkle Treeの生成
-[ソースコード](https://github.com/iotaledger/mam.client.js/blob/master/lib/merkle.js#L54)
-　MAMのMerkle TreeはSeedから生成する。（種が木へ！）Merkle Treeは`start`と`size`という引数をとる。これはSeedから生成されうる`address`の[連鎖](https://iotafan.jp/developer/iota_universe_abmushi_20171213/)のどの部分をMerkle Treeの葉として使うかに用いられる。SeedからPrivate Keyを生成し、`address`を生成するために、`index`という引数をとったことを覚えているだろうか？（忘れてしまった人のための記事は[こちら](https://qiita.com/ABmushi/items/e271ff05884a7d47658d#%E3%82%A2%E3%83%89%E3%83%AC%E3%82%B9)。）下の図のA、B、C、Dはそれぞれ`index`が0~3で生成されるPrivate Keyだ。A'、B'、C'、D'は該当Private Keyから生成される`address`である。
-![mam_merkle_1-2.png](https://qiita-image-store.s3.amazonaws.com/0/187795/06ea21b7-6427-90b4-1c82-4a64c53a0df1.png)
-　Merkle Treeの葉A"、B"、C"、D"には`address`にハッシュ関数を通したものを用いる。葉から`root`へ枝が根に集まるようにハッシュ関数に通していく。図で言うと下のノードから葉の方向へ逆生成させることはできない。
+Source [here](https://github.com/iotaledger/mam.client.js/blob/master/lib/merkle.js#L54)
+Merkle Tree of MAM is generated from seed. (What a surprise that seed grows up to a tree!) Merkle Tree has two parameters, `start` and `size`. `start` is used as a parameter `index` of creating private key. And `size` is used to specify the range in the sequence of the private key generation. To illustrate, look at the figure below. A,B,C,D are the private keys generated with `index` parameters as 0,1,2,3(where `start = 0`). And A',B',C',D' are the address generated out of each private key.
 
-### Siblingsの取得
-　Siblings（兄弟）という概念について説明する。
-　まず、上のMerkle Tree上の葉`A'`が与えられたとする。`root`を得るためには全ての葉`B'C'D'`が必要になるが全ての葉を知れない場合どうやって`root`を導き出せるか。Siblingsとは葉`A'`とともに`root`を得るために使われるMerkle Tree上の枝のことである。図を見る方が早いかも知れない。
+![mam_merkle_1-2.png](https://qiita-image-store.s3.amazonaws.com/0/187795/06ea21b7-6427-90b4-1c82-4a64c53a0df1.png)
+
+　Leaf of the merkle tree, A",B",C",D" are hash(address). From leaf to root, hash of children nodes are merged into their parent node. Obviously, you cannot generate children nodes from parent.
+
+### Siblings
+　Let's say, leaf `A'` is given, to obtain root, you need to have all other leaves `B'C'D'`. But, if you cannot access to those, how do you get root? **Siblings** are the complimentary hashes that are necessary to generate `root` with given leaf. Look at the figure below.
+ 
 ![mam_2_siblings_2.png](https://qiita-image-store.s3.amazonaws.com/0/187795/c3f7d1b4-984b-d4a1-d054-e788fe2a7a10.png)
 
-　今回の例では葉`A'`が与えられた。その場合は`B"`と`Hash(C"D")`があれば**全ての葉を知らなくとも`root`を求めることができる**。このような関係を持つ枝、`B"`と`Hash(C"D")`を`A'`の**Siblings**と呼ぶ。
+　For the case leaf is `A'`, siblings are `B"`and `Hash(C"D")`. Without knowing all leaves, with siblings, you can calculate `root`.
 
-### 秘密鍵と公開鍵
-　署名主が隠したい秘密鍵は今回の場合、Private KeyのA、B、C、Dのペアだ。Seed所有者だけが秘密鍵を持っている。（Private KeyはSeedと同様他人に教えてはダメだ。）そして、署名の公開鍵はA、B、C、Dから生成される`root`と`siblings`である。
-　`siblings`から`root`を生成できるのはMerkle Treeを生成した本人だけである。本人以外は`siblings`だけでは足りず、欠けた部分を補う葉が必要だ。
-　上の例で考えるなら`index=0`の`siblings=[B",Hash(C"D")]`を与えられた場合、`A'`を持っていないと`root`を生成できない。`A'`は本人しか持っていない。つまり、公開されている情報は`siblings`だけなのに`root`を生成できることが本人であることの証明になる。*※重要なのは`root`を知ることではなく生成できることだ。*
+### Secret Key and Public Key
+　Publisher(Seed owner) has to make Private Keys, A,B,C,D confidential. But, `root` and `siblings` are public keys, because you can still achieve your private key's safety. Because, only the seed owner, or to say Merkle Tree owner, can calculate `root` from public information. Other cannot generate `root`. Yes, they know what the `root` is, but they don't know how to generate. To illustrate, using the example above, other people must have a **leaf `A'`** to generate `root` by combining it with also public `siblings`. This way, you can distinguish correct owner of the merkle tree from other folks.
+ 
 　![mam_2_merkle_pubkey.png](https://qiita-image-store.s3.amazonaws.com/0/187795/42e5b069-c3bf-333e-2d9f-84b7fa916bcb.png)
 　
-　この仕組みを使ってMAMではチャンネルの本人識別を実現した。さて、次章でついにその本題に入ろう。
+　This technic is magically used in MAM to prove ownership of the message chain.
 
-# MAMの裏側 - 署名・承認
-　ここまで記事で出てきた大きな概念が二つあった。
+# Behind MAM - Signature and Approval
+　In this chapter, I'm going to merge two major topics discussed so far:
 >1. nextChennelKeyで繋がるメッセージチェーン
 >2. Merkle Tree
 
-　この二つを組み合わせてMAMの投稿は成し遂げられる。この章ではついにMAMの実際行われているメッセージ生成の手順を説明していく。
-## MAMメッセージの生成 - MAM.create
-[ソースコード](https://github.com/iotaledger/mam.client.js/blob/master/lib/mam.js#L63)
+## MAM.create
+source [here](https://github.com/iotaledger/mam.client.js/blob/master/lib/mam.js#L63)
 　まず、Aさんが初めてチャンネルを開設する際、Aさんは
 >1. `channelKey`を一つ生成。
 2. 同じ`size`のMerkle Treeを`start`から２つ分生成。

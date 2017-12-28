@@ -150,13 +150,17 @@ Signature is used to sign anything(=signed data usually bundle) on tangle that b
 
 # Reference
 IOTA iotaledger [https://github.com/iotaledger](https://github.com/iotaledger)
-signing part: JavaScript=>[signing.js](https://github.com/iotaledger/iota.lib.js/blob/master/lib/crypto/signing/signing.js).
+
+signing part:
+JavaScript=>[signing.js](https://github.com/iotaledger/iota.lib.js/blob/master/lib/crypto/signing/signing.js).
+
 Java=>[Signing.java](https://github.com/iotaledger/iota.lib.java/blob/master/jota/src/main/java/jota/utils/Signing.java).
 
 # About Author
 @abmushi on [twitter](https://twitter.com/), slack
 
 Translated from my original article written in Japanese [here](https://qiita.com/ABmushi/items/ab523d838bf71ca385d4)
+
 Donation is always welcome and appreciated!
 
 BTC: 1ACGpgpAMgaAKbGpPq2sDa467MnRNdW4wX

@@ -265,7 +265,7 @@ const mam = new MAM.create({
 ## MAM.parse
 source [here](https://github.com/iotaledger/mam.client.js/blob/master/lib/mam.js#L131)
 　So, how we parse this message?
-### Tell viewer both `channelKey` and `root`
+### Tell both `channelKey` and `root` to viewers
 >**chennelKey** is used to decrypt message, and for generating `address`.
 >
 >**root** is used as *ownership verification checker* to check decrypted message is Alice's or not.

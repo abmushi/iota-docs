@@ -33,7 +33,7 @@ Signature is used to sign anything(=signed data usually bundle) on tangle that b
 > > Formula: *N_i = 13 - d*
 > 4. Those hashed segments are called **Signature** together.
 
-![signing1.png](https://qiita-image-store.s3.amazonaws.com/0/187795/303a022c-19ef-fdd9-4125-700f51a8a005.png)
+![signing1.png](https://github.com/abmushi/iota/blob/master/qiita/docs/sig/sig.png)
 
 # Validation (address Re-generation )
 > 1. have your Signature ready.
@@ -48,14 +48,14 @@ Signature is used to sign anything(=signed data usually bundle) on tangle that b
 > 5. Hash the `digest` twice.
 > 6. Check if the product of step 5 matches the address of the signed data(usually Bundle).
 
-![validate1.png](https://qiita-image-store.s3.amazonaws.com/0/187795/e4f2e7de-2a46-e25e-4fe9-25a024ad7eba.png)
+![validate1.png](https://github.com/abmushi/iota/blob/master/qiita/docs/sig/val.png)
 
 # Signed Data
 　Signature is used to sign your input address when you spend. And signature is stored in the bundle that spends the signed input. Signature data (length = security * 2187 tryte) is stored at `signatureFragment`. (Note that `signatureFragment`'s capacity is 2187 tryte, so the larger security, the more transactions for storing signature are necessary to be included in the bundle.)
  Signed data mentioned above refers to the bundle hash (81 tryte) that includes the signature.
  （Strictly speaking, signed data is called normalized bundle hash, which is slightly incremented bundle hash.）
 
- ![singed_data.png](https://qiita-image-store.s3.amazonaws.com/0/187795/f0c3dbb7-503c-51a7-64c3-579162c6fb71.png)
+ ![singed_data.png](https://github.com/abmushi/iota/blob/master/qiita/docs/sig/norm.png)
 
 　data[0], data[1], data[2], which are components of normailized bundle hash, are used as *Signed Data*. How many times to hash each of 27 segments coressponds to each tryte of 27 trytes signed data. data[i] above is 27 trytes of signed data. if `security = 1`, data[0] is used. if `security = 2`, data[0] and data[1] is used such that in total, 54 trytes are used to sign. (table above)
  Recall the when creating bundle, numbers of transactions that store signature depends also on the security level. That was because as security level increases, more data[i] is used to sign.

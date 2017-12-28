@@ -298,7 +298,7 @@ In this example, `root_0` of `tree0` and `channelKey` is given to viewers so tha
 　You might have noticed that by changing the way to hash to calculate root, channel key, siblings and etc.. As long as you share how to post and parse messages with your viewers, you can have different format of MAM. The MAM explained in this article is just one of all possible MAMs.
 
 # Ask for Revise and Feedback
-I hope anyones to notify me any mistakes and ambiguity found on this article. Feedback is always welcome.
+Please, let me know any mistakes and ambiguity found on this article. Feedback is always welcome.
 
 # Reference
 JS official deprecated code：[mam.client.js](https://github.com/iotaledger/mam.client.js)

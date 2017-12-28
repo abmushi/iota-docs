@@ -27,7 +27,7 @@ Signature is used to sign anything(=signed data usually bundle) on tangle that b
 > 2. divides the Private Key into 'L' segments, where `L = security * 27`.
 > 3. For each *i*-th segment, hash N_*i* times, where N_*i* is caluculated as followed:
 > > **How to get N**
-> > For each *i*-th tryte of the **Signed Data**, get decimal 'd' of the tryte. Converter [here](https://qiita-image-store.s3.amazonaws.com/0/187795/e325fe61-7773-8e64-46e0-2e98d66aacf4.png). e.g) tryte[9] corresponds to `d=0`, [A] is to `d=1`...[M] is to `d=13`, L is to `d=-13`...Y is to `d=-2`, Z is to `d=-1`).
+> > For each *i*-th tryte of the **Signed Data**, get decimal 'd' of the tryte. Converter [here](https://github.com/abmushi/iota/blob/master/qiita/docs/Signature-en.md#tritstryte-to-decimal-table). e.g) tryte[9] corresponds to `d=0`, [A] is to `d=1`...[M] is to `d=13`, L is to `d=-13`...Y is to `d=-2`, Z is to `d=-1`).
 > > Formula: *N_i = 13 - d*
 > 4. Those hashed segments are called **Signature** together.
 
@@ -38,7 +38,7 @@ Signature is used to sign anything(=signed data usually bundle) on tangle that b
 > 2. divides the Signature into 'L' segments, where `L = security * 27`.
 > 3. For each *i*-th segment, hash M_*i* times, where M_*i* is caluculated as followed:
 > > **How to get M** (basically main idea is same as N.)
-> > For each *i*-th tryte of the **Signed Data**, get decimal 'd' of the tryte. Converter [here](https://qiita-image-store.s3.amazonaws.com/0/187795/e325fe61-7773-8e64-46e0-2e98d66aacf4.png). e.g) tryte[9] corresponds to `d=0`, [A] is to `d=1`...[M] is to `d=13`, L is to `d=-13`...Y is to `d=-2`, Z is to `d=-1`).
+> > For each *i*-th tryte of the **Signed Data**, get decimal 'd' of the tryte. Converter [here](https://github.com/abmushi/iota/blob/master/qiita/docs/Signature-en.md#tritstryte-to-decimal-table). e.g) tryte[9] corresponds to `d=0`, [A] is to `d=1`...[M] is to `d=13`, L is to `d=-13`...Y is to `d=-2`, Z is to `d=-1`).
 > > Formula: *M_i = 13 + d*
 > 4. Hash those segment together and get `digest`.
 > 5. Hash the `digest` twice.

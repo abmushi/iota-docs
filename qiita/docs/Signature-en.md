@@ -27,6 +27,7 @@ Signature is used to sign anything(=signed data usually bundle) on tangle that b
 > 2. divides the Private Key into 'L' segments, where `L = security * 27`.
 > 3. For each *i*-th segment, hash N_*i* times, where N_*i* is caluculated as followed:
 > > **How to get N**
+> >
 > > For each *i*-th tryte of the **Signed Data**, get decimal 'd' of the tryte. Converter [here](https://github.com/abmushi/iota/blob/master/qiita/docs/Signature-en.md#tritstryte-to-decimal-table). e.g) tryte[9] corresponds to `d=0`, [A] is to `d=1`...[M] is to `d=13`, L is to `d=-13`...Y is to `d=-2`, Z is to `d=-1`).
 > >
 > > Formula: *N_i = 13 - d*
@@ -39,6 +40,7 @@ Signature is used to sign anything(=signed data usually bundle) on tangle that b
 > 2. divides the Signature into 'L' segments, where `L = security * 27`.
 > 3. For each *i*-th segment, hash M_*i* times, where M_*i* is caluculated as followed:
 > > **How to get M** (basically main idea is same as N.)
+> >
 > > For each *i*-th tryte of the **Signed Data**, get decimal 'd' of the tryte. Converter [here](https://github.com/abmushi/iota/blob/master/qiita/docs/Signature-en.md#tritstryte-to-decimal-table). e.g) tryte[9] corresponds to `d=0`, [A] is to `d=1`...[M] is to `d=13`, L is to `d=-13`...Y is to `d=-2`, Z is to `d=-1`).
 > >
 > > Formula: *M_i = 13 + d*
@@ -55,7 +57,7 @@ Signature is used to sign anything(=signed data usually bundle) on tangle that b
 
  ![singed_data.png](https://qiita-image-store.s3.amazonaws.com/0/187795/f0c3dbb7-503c-51a7-64c3-579162c6fb71.png)
 
-　data[0], data[1], data[2], which are components of normailized bundle hash, are used as *Signed Data*. How many times to hash each of 27 segments coressponds to each tryte of 27 trytes signed data. data[i] above is 27 trytes of signed data. if `security = 1`, data[0] is used. if `security = 2`, data[0] and data[1] is used such that in total, 54 trytes are used to sign. (detail above)
+　data[0], data[1], data[2], which are components of normailized bundle hash, are used as *Signed Data*. How many times to hash each of 27 segments coressponds to each tryte of 27 trytes signed data. data[i] above is 27 trytes of signed data. if `security = 1`, data[0] is used. if `security = 2`, data[0] and data[1] is used such that in total, 54 trytes are used to sign. (table above)
  Recall the when creating bundle, numbers of transactions that store signature depends also on the security level. That was because as security level increases, more data[i] is used to sign.
  If `security >= 4`, signature is created with data loop: data[3] does not exist so use data[0] again.
 
@@ -133,6 +135,7 @@ Signature is used to sign anything(=signed data usually bundle) on tangle that b
  You must have seen the warnings "Do not reuse the address!". But, what's that? And why can't we just simply use same address?
  Secret is here. Recall:
 > **How to get N**
+> 
 > For each *i*-th tryte of the **Signed Data**, get decimal 'd' of the tryte. Converter [here](https://github.com/abmushi/iota/blob/master/qiita/docs/Signature-en.md#tritstryte-to-decimal-table). e.g) tryte[9] corresponds to `d=0`, [A] is to `d=1`...[M] is to `d=13`, L is to `d=-13`...Y is to `d=-2`, Z is to `d=-1`).
 >
 > Formula: *N_i = 13 - d*

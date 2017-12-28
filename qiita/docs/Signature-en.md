@@ -25,7 +25,7 @@ Signature is used to sign anything(=signed data usually bundle) on tangle that b
 
 > 1. have your Private Key ready.
 > 2. divides the Private Key into 'L' segments, where `L = security * 27`.
-> 3. For each *i*-th segment, hash N_*i* times, where N_*i* is caluculated as folowings:
+> 3. For each *i*-th segment, hash N_*i* times, where N_*i* is caluculated as followed:
 > > **How to get N**
 > > For each *i*-th tryte of the **Signed Data**, get decimal 'd' of the tryte. Converter [here](https://qiita-image-store.s3.amazonaws.com/0/187795/e325fe61-7773-8e64-46e0-2e98d66aacf4.png). e.g) tryte[9] corresponds to `d=0`, [A] is to `d=1`...[M] is to `d=13`, L is to `d=-13`...Y is to `d=-2`, Z is to `d=-1`).
 > > Formula: *N_i = 13 - d*
@@ -36,7 +36,7 @@ Signature is used to sign anything(=signed data usually bundle) on tangle that b
 # Validation (address Re-generation )
 > 1. have your Signature ready.
 > 2. divides the Signature into 'L' segments, where `L = security * 27`.
-> 3. For each *i*-th segment, hash M_*i* times, where M_*i* is caluculated as folowings:
+> 3. For each *i*-th segment, hash M_*i* times, where M_*i* is caluculated as followed:
 > > **How to get M** (basically main idea is same as N.)
 > > For each *i*-th tryte of the **Signed Data**, get decimal 'd' of the tryte. Converter [here](https://qiita-image-store.s3.amazonaws.com/0/187795/e325fe61-7773-8e64-46e0-2e98d66aacf4.png). e.g) tryte[9] corresponds to `d=0`, [A] is to `d=1`...[M] is to `d=13`, L is to `d=-13`...Y is to `d=-2`, Z is to `d=-1`).
 > > Formula: *M_i = 13 + d*
@@ -47,8 +47,9 @@ Signature is used to sign anything(=signed data usually bundle) on tangle that b
 ![validate1.png](https://qiita-image-store.s3.amazonaws.com/0/187795/e4f2e7de-2a46-e25e-4fe9-25a024ad7eba.png)
 
 # Signed Data
-　IOTAの署名は[この記事](https://qiita.com/ABmushi/items/0c9f73e08fdb6597ab9c#%E5%85%A5%E5%8A%9B%E9%83%A8---input)でも説明した通り、**入力部**の生成で必要となったことを思い出して欲しい。Signed DataをPrivate Keyで署名し、署名は入力部の`signatureFragment`に保管される。では、その*Signed Data（署名されるデータ）*は何に当たるのかを最後に説明したい。
-　それは、**Bundleのハッシュ（81トライト）**である。（厳密にいうとBundleのハッシュを少々ずらしたNormalized Bundleと呼ばれる中間生成物である。Normalized Bundleも81トライトの文字列でほぼBundleハッシュとして扱えるので細かい話は後に回す。）
+　Signature is used to sign your input address when you spend. And signature is stored in the bundle that spends the signed input. Signature data (length = security * 2187 tryte) is stored at `signatureFragment`. (Note that `signatureFragment`'s capacity is 2187 tryte, so the larger security, the more transactions for storing signature are necessary to be included in the bundle.)
+ Signed data mentioned above refers to the bundle hash (81 tryte) that includes the signature.
+ （Strictly speaking, signed data is called normalized bundle hash, which is slightly incremented bundle hash.）
 
  ![singed_data.png](https://qiita-image-store.s3.amazonaws.com/0/187795/f0c3dbb7-503c-51a7-64c3-579162c6fb71.png)
 

@@ -296,8 +296,11 @@ I hope anyones to notify me any mistakes and ambiguity found on this article. Fe
 
 # Reference
 JS official deprecated code：[mam.client.js](https://github.com/iotaledger/mam.client.js)
+
 Official announcement：[Introducing Masked Authenticated Messaging](https://blog.iota.org/introducing-masked-authenticated-messaging-e55c1822d50e)
+
 Overview：[Overview](https://github.com/iotaledger/mam.client.js/blob/master/Overview.md)
+
 Writen in Chinese：[MAM　筆記](https://hackmd.io/c/rkpoORY4W/%2Fs%2FrJkpIrrbM)
 
 # About Author
@@ -307,6 +310,7 @@ Translated from my original article written in Japanese [here](https://qiita.com
 Donation is always welcome and appreciated!
 
 BTC: 1ACGpgpAMgaAKbGpPq2sDa467MnRNdW4wX
+
 IOTA: KWIEEQHAJBJTDPE9WEDILKMVQCJPZSF9CXALYQTULCGNPLIIKJLFYHCWSJNXDALKHAOOTELQUIXWIOFVDPQNXMLBZB
 
 

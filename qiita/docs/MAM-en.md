@@ -1,7 +1,7 @@
 Deep Dive into MAM: the IoT-ic feature of IOTA
 
 # Preface
- MAM(Masked Authenticated Message) is one of the Beta service but must call more attentions from developers. Currently, IOTA officially is developing the newest version of MAM at [here](https://github.com/iotaledger/MAM) in Rust. However, this article explains the older and deprecated version of MAM written in [Javascript](https://github.com/iotaledger/mam.client.js). Since the big picture and algorithm used in both version are quite similar and considerring there are few articles available online that disclose the blackbox behind what MAM does, I think the deprecated explanation of MAM is still usefull for many potential developers to understand MAM and widen the visible frontier. 
+ MAM(Masked Authenticated Message) is one of the Beta services but must call more attentions from developers. Currently, IOTA officially is developing the newest version of MAM at [here](https://github.com/iotaledger/MAM) in Rust. However, this article explains the older and deprecated version of MAM written in [Javascript](https://github.com/iotaledger/mam.client.js). Since the big picture and algorithm used in both version are quite similar and considerring there are few articles available online that disclose the blackbox behind what MAM does, I think the deprecated explanation of MAM is still useful for many potential developers to understand MAM and widen the prospective frontier. 
 
 # MAM
  IOTA boasts of its zero transaction fee. Also, each transaction object could contain a **signatureFragment** of 2187 length. MAM's first basic idea is that by encrypting the signatureFragment, one could easily claim cloud storage on Tangle, which in MAM is called **Channel**. And key that encrypts and decrypts it is called **Channel Key**. If you want to publish your channel available to public, you could just make your Channel Key public. If not, let it hide and never tell anybodies. The Channel Key can be chosen by channel owner arbitrarly.
@@ -20,9 +20,9 @@ Deep Dive into MAM: the IoT-ic feature of IOTA
 Detail will be explained later.
 
 ### In Practice
-主な利用例として考えられるのが、例えば
->1. **IoTのデータ管理**：工場内のデバイスやセンサー群から集まった秘匿にしたい数値を暗号化してチャンネルに投稿し、担当者のみがもつChannel Keyでデータにアクセスする。生データの秘匿性を確保しつつ公開台帳に情報を保持できる。
->2. **グループチャット**：Channel Keyを教え合って２つ以上のチャンネル間をまたいでチャットする。（非公式Alpha版[iota1k](https://github.com/xx10t4/iota1k)が有志によって開発されている。）
+In practice, MAM would be used in:
+>1. **IoT data flow management**：You could collect data from small sensors and devices in the factory. And those collected data can be encrypted and posted to DLT, Tangle. You can hold public availability and security at the same time.
+>2. **Group chat**：Knowing channel keys of each other, they can chat.（Alpha available called [iota1k](https://github.com/xx10t4/iota1k) is being developed.）
 
 ## Older MAM and Newer MAM
  As I notified above. This article explains the older MAM. But, for those who are interested in newer, jump to this [link](https://blog.iota.org/introducing-masked-authenticated-messaging-e55c1822d50e).
@@ -200,7 +200,7 @@ iota.api.sendCommand({
 　[Merkle tree based signature scheme](https://www.imperialviolet.org/2013/07/18/hashsig.html) is the technic used in MAM.
 　But, I don't explain what the computer science term "Merkle Tree" is. Because since interests in Cryptos skyrocket, the idea of the merkle tree, which is the core module often seen in plenty of cryoto projects, is explained countless times at various places. You could just google it.
  
-### Merkle Treeの生成
+### Merkle Tree create
 Source [here](https://github.com/iotaledger/mam.client.js/blob/master/lib/merkle.js#L54)
 Merkle Tree of MAM is generated from seed. (What a surprise that seed grows up to a tree!) Merkle Tree has two parameters, `start` and `size`. `start` is used as a parameter `index` of creating private key. And `size` is used to specify the range in the sequence of the private key generation. To illustrate, look at the figure below. A,B,C,D are the private keys generated with `index` parameters as 0,1,2,3(where `start = 0`). And A',B',C',D' are the address generated out of each private key.
 
@@ -222,7 +222,7 @@ Merkle Tree of MAM is generated from seed. (What a surprise that seed grows up t
 　
 　This technic is magically used in MAM to prove ownership of the message chain.
 
-# Behind MAM - Signature and Approval
+# Behind MAM - Signature and Validation
 　In this chapter, I'm going to merge two major topics discussed so far:
 >1. Message Chain connected via nextChannelKey
 >2. Merkle Tree
@@ -251,57 +251,62 @@ const mam = new MAM.create({
 });
 ```
  So, what's going to happen in MAM.create then?
-　まず、`tree0`の**Siblings**を求める。今回与えられる葉は先ほど決めた**葉番号**の葉とする。ということは`leaf_index = 0`なので`siblings`は`B"`と`Hash(C"D")`になる。
+ 
+ Firstly, create **siblings** of `tree0` with `index = leaf_index`. In this case, `leaf_index = 0`, so `siblings` are `B"` and `Hash(C"D")`. 
 ![mam_2_small_sib.png](https://qiita-image-store.s3.amazonaws.com/0/187795/d67e16e9-7ad9-d54e-4ba6-978af070fc0d.png)
-　次に、`messageTrytes`と呼ばれる**「nextRootと平文を足した文字列」**を署名されるデータとして**葉番号のPrivate Key**で署名を作る。署名作成については[こちら](https://qiita.com/ABmushi/items/422d1bf94be0c919583a#%E7%BD%B2%E5%90%8D%E3%81%AE%E6%96%B9%E6%B3%95)でも説明したが、それを踏まえて下図のように署名は作られる。
+ Nextly, make a signature, where `messageTrytes` that are composite of `nextRoot` and raw_message as signed data, and private key of `leaf_index` as signing key. 署名作成については[こちら](https://qiita.com/ABmushi/items/422d1bf94be0c919583a#%E7%BD%B2%E5%90%8D%E3%81%AE%E6%96%B9%E6%B3%95)でも説明したが、それを踏まえて下図のように署名は作られる。
 ![mam_2_sig2.png](https://qiita-image-store.s3.amazonaws.com/0/187795/5c4af53b-d673-6e3b-b71b-ee9778df1335.png)
-　こうして今、手元にある値を使ってMAMの１つのメッセージは作られる。それを図示すると下のようになる。
+　Now with these given attributes, one MAM message is created. This is visulaized below.
 ![mam_2_overview_single.png](https://qiita-image-store.s3.amazonaws.com/0/187795/bc220ff5-85ff-8cfe-2fac-0cadf57b32d1.png)
-## MAMメッセージ閲覧 - MAM.parse
-[ソースコード](https://github.com/iotaledger/mam.client.js/blob/master/lib/mam.js#L131)
-　次に投稿されたメッセージを閲覧する方法について説明する。これを読むことで今まで出てきた話がついに一つにまとまる。
-### チャンネル鍵と**root**を閲覧者に教える
->**チャンネル鍵**はメッセージの復号のための鍵、`messageID`（アドレス）として閲覧者に教える。そして、メッセージがAさんのものだと照らし合わせるための勘合として**`root`**を閲覧者に渡す。
+## MAM.parse
+source [here](https://github.com/iotaledger/mam.client.js/blob/master/lib/mam.js#L131)
+　So, how we parse this message?
+### Tell viewer both `channelKey` and `root`
+>**chennelKey** is used to decrypt message, and for generating `address`.
+>**root** is used as *ownership verification checker* to check decrypted message is of A or not.
 
-　この例だと、チャンネル鍵と`tree0`の`root_0`を閲覧者にチャンネル鍵として渡す。ここでBさんが閲覧者としてAさんからチャンネル鍵とrootを教えてもらったとしよう。
-　Bさんはチャンネル鍵からメッセージの保管アドレス`messageID`を作ってメッセージを見つける。そして、チャンネル鍵でメッセージを復号する。
-　次に、復号したメッセージの署名を`messageTrytes`（署名されるデータ）で承認する。署名の承認の仕方は[こちら](https://qiita.com/ABmushi/items/422d1bf94be0c919583a#%E6%89%BF%E8%AA%8D%E3%81%AE%E6%96%B9%E6%B3%95%E3%82%A2%E3%83%89%E3%83%AC%E3%82%B9%E3%81%AE%E9%80%86%E7%94%9F%E6%88%90)。
+In this example, `root_0` of `tree0` and `channelKey` is given to viewers so that they can understand A's first published message. Now, assume that Bob has been given both `root_0` and `chennelKey`.
+　Bob calculates `messageID` from given `channelKey` to find where Alice's message is being stored. Then, decrypt found message with `channelKey`.
+　Next, he validates signature of the message with `messageTrytes` as signed data.署名の承認の仕方は[こちら](https://qiita.com/ABmushi/items/422d1bf94be0c919583a#%E6%89%BF%E8%AA%8D%E3%81%AE%E6%96%B9%E6%B3%95%E3%82%A2%E3%83%89%E3%83%AC%E3%82%B9%E3%81%AE%E9%80%86%E7%94%9F%E6%88%90)。
 
 　![mam_2_sig_address.png](https://qiita-image-store.s3.amazonaws.com/0/187795/464abb92-1775-8faa-8870-bf8e86fe2df9.png)
-### 本人のメッセージか検証
-　次に、承認して得られたアドレスが`leaf_index`の場所のアドレスとして`Siblings`を使ってその`root`を求める。こうして求められた`root`（下図のroot_0）がAさんからもらった`root`と一致すれば、メッセージはAさんのものだと閲覧者は判断できる。
+### Ownership Verification
+　After validation of th signature, Bob gets an address. He uses the address as a leaf at `leaf_index` of the merkle tree. Then with given `siblings` in the message, he finds `root` of the merkle tree. If this `root` matches the root Alice told him, the decrypted message is proved to be made by Alice.
 ![mam_2_address_merkle.png](https://qiita-image-store.s3.amazonaws.com/0/187795/052d06e5-640a-6c12-5467-df1751d0a1db.png)
-　そうでない場合はどういうことか。署名を承認する時に使う`messageTrytes`の内容がAさんが作ったものと違う場合、得られるアドレスが変わる。そのアドレスと`Siblings`を使ってrootを求めると、もちろん得られる`root`の値も変わる。そして、Aさんから教えてもらった`root`と一致しない。
-　こうすることで、もし悪意ある者がチャンネル鍵を使って同じ`messageID`（アドレス）宛に全くAさんと関係のないメッセージを投稿したとしても、このrootの検証作業で最終的に弾かれる。
+　If not, that means signed data `messageTrytes` is different than Alice's. So, the address generated by validating singnature is also going to be different. Then with that address, calculated with `siblings`, he gets `root`. This `root` does not match the root Alice gave him.
+ In this way, malicious attackers who know the channel key at any points on the message chain cannot generate fake message on the chain. Precisely, they can post fake message on the address `messageID`, but when viewers decrypt the fake message, because they cannot match their given `root`, fake message is never going to be regarded as Alice's real message.
+ 
+## nextRoot
+　As I mentioned, MAM is a message chain. One message decryption has to lead to next message. Finding next message is the role of `nextChannelKey`, but what about the checking ownership of the next message? Each `messageTrytes` contain the value `nextRoot` stored with raw message. This `nextRoot` is used to check the validity of the next message in the same way as explained in previous chapter. The you generate `nextRoot`, the larger index is used as `start` of the merkle tree.
+　Remember `nextChannelKey` is to find the address and decrypt next message, `nextRoot` is used to compare with caluculated `root` of the next message, which has `siblings` and `leaf_index` in it.
 
-## メッセージチェーンの構築 - nextRoot
-　MAMはメッセージチェーンだ。一つのメッセージを復号すれば、`nextChannelKey`を使って次のメッセージも閲覧できる。ということは、その次のメッセージがチャンネル所有者本人が投稿したものか検証する必要がある。そのため、メッセージには`nextChannelKey`の他に、`nextRoot`という値も含ませる。この`nextRoot`は`messageTrytes`に平文と一緒に含まれているため署名されるデータの一部である。`nextRoot`生成するたびに、上の図で言う所のMerkle rootの生成に使われる葉（ABCDEF...）が右にどんどんずれていく。（`start`が大きくなっていく。）
-　次の投稿を`nextChannelKey`で復号した際には、前項で説明したように今度は`nextRoot`と最終的に得られる`root`と一致するかを確認する。
+# Chain fork
+　MAM's message chain may fork.
+　By changing `leaf_index` and coressponding `siblings`, you could post different message that still holds your ownership. In this way, at the same address `messageID`, you could have your message as many as the merkle tree's `size`.
+　And `nextChannelKey` can be generated in different way such that forked chain will follow different `messageID` path.
 
-## 小休止
-　理解できただろうか？想像以上に多くのアイデアが詰め込まれていたことに驚いたかもしれない。筆者も文でうまく説明できたか不安だ。
-　不明点等あれば公式Slackで筆者@abmushi宛にDMでもチャットでも良いので質問をじゃんじゃん投げて欲しい。質疑応答はお互いの理解が深まる絶好のチャンスだ。
+## Use case
+　I came up with how to use forking message chain. You may see forking chain as the tree structure of the directory, where the first published message as root directory and children are generated by forking chain. And telling users different channel keys at differnt points on the chain, you can manage access controll. The users close to superuser knows the channel key that opens closer message to the first message.
+ 
+# MAM is Protocol
+　You might have noticed that by changing the way to hash to calculate root, channel key, siblings and etc.. As long as you share how to post and parse messages with your viewers, you can have different format of MAM. The MAM explained in this article is just one of all possible MAMs.
 
-# チェーンフォーク - 分裂
-　最後にMAMを特徴づける**分裂**という機能についても説明したい。ブロックチェーンのようにメッセージチェーンもフォークする。
-　メッセージを分裂させたいときは、単純に葉番号`leaf_index`が違う`siblings`を含むメッセージを投稿すれば良い。こうすることで同じ`messageID`（アドレス）に本人検証も問題なくできるメッセージを複数（最大はMerkle Treeの`size`）持てる。
-　また、`nextChannelKey`の生成方法も（nextChannelKey=hash(channelKey,leaf_index)）というように`leaf_index`に依存するようにすれば、フォーク後全く違うアドレスを辿るようにチェーンを伸びていかせることもできる。
+# Ask for Revise and Feedback
+I hope anyones to notify me any mistakes and ambiguity found on this article. Feedback is always welcome.
 
-## 利用例
-　筆者が思いついたこのチェーンフォークの用途は、MAMのメッセージチェーン自体をディレクトリのツリー構造として利用すること。
-　まず最初にルートディレクトリを投稿する。そのディレクトリの子ディレクトリの数だけ分裂させることを繰り返せば、Tangle上にツリー構造を作れる。また、どの部分のチャンネル鍵を教えるかによってファイルのアクセス権限も持たせることができる。
+# Reference
+JS official deprecated code：[mam.client.js](https://github.com/iotaledger/mam.client.js)
+Official announcement：[Introducing Masked Authenticated Messaging](https://blog.iota.org/introducing-masked-authenticated-messaging-e55c1822d50e)
+Overview：[Overview](https://github.com/iotaledger/mam.client.js/blob/master/Overview.md)
+Writen in Chinese：[MAM　筆記](https://hackmd.io/c/rkpoORY4W/%2Fs%2FrJkpIrrbM)
 
-# MAMとはプロトコル
-　MAMとはそれ自体が発行者が自由に決められるプロトコルである。投稿者と潜在的な閲覧者の間でMAMの各種値（`nextChannelKey`、`messageID`、や`nextRoom`）の計算方法を統一することで、この記事で紹介した方法以外の手順を使ってMAMを発行できる。
+# About Author
+@abmushi on twitter, slack
 
-# 最後に
-　MAMを理解したいという気持ちはずっと持っていたものの、今IOTAが取り組んでいる課題は別のところにあり、コミュニティで具体的にはほとんど語られず、ビジョンとしてのみ存在していたこのMAM。結局公式のソースコードを読んで自分で理解するしか手段がなかった。
-　その結果、IOTAのBundleや署名などの根幹技術がコードレベルでどうなっているか理解できたので結果的にはものすごくためになった。
-　記事中でも今まで投稿したIOTAの記事の知識が前提になることが多く数え切れないほど引用リンクを貼った。間違いなくこの記事は今年の集大成だろう。
-　それではみなさん良いお年を！
+Translated from my original article written in Japanese [here](https://qiita.com/ABmushi/items/ab523d838bf71ca385d4)
+Donation is always welcome and appreciated!
 
-# 参考文献
-JSのコード：[mam.client.js](https://github.com/iotaledger/mam.client.js)
-公式アナウンス：[Introducing Masked Authenticated Messaging](https://blog.iota.org/introducing-masked-authenticated-messaging-e55c1822d50e)
-外観：[Overview](https://github.com/iotaledger/mam.client.js/blob/master/Overview.md)
-たまたま見つけた中国語の記事：[MAM　筆記](https://hackmd.io/c/rkpoORY4W/%2Fs%2FrJkpIrrbM)
+BTC: 1ACGpgpAMgaAKbGpPq2sDa467MnRNdW4wX
+IOTA: KWIEEQHAJBJTDPE9WEDILKMVQCJPZSF9CXALYQTULCGNPLIIKJLFYHCWSJNXDALKHAOOTELQUIXWIOFVDPQNXMLBZB
+
+

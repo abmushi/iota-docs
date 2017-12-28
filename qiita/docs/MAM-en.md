@@ -310,7 +310,7 @@ Overview：[Overview](https://github.com/iotaledger/mam.client.js/blob/master/Ov
 Writen in Chinese：[MAM　筆記](https://hackmd.io/c/rkpoORY4W/%2Fs%2FrJkpIrrbM)
 
 # About Author
-@abmushi on twitter, slack
+@abmushi on [twitter](https://twitter.com/), slack
 
 Translated from my original article written in Japanese [here](https://qiita.com/ABmushi/items/ab523d838bf71ca385d4)
 Donation is always welcome and appreciated!

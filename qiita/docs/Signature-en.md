@@ -1,18 +1,24 @@
 IOTA:Signature And Validation
 
-# CurlとKerl
+# Curl and Kerl
 　link [here](https://github.com/iotaledger/kerl)。
 
 # Address generation
-　まず、シードからPrivate Keyを生成する。詳細は[こちら](https://qiita.com/ABmushi/items/e271ff05884a7d47658d#%E3%82%A2%E3%83%89%E3%83%AC%E3%82%B9)。
-①　シードから生成されるPrivate Keyを用意する。
-②　Private Keyを27個のセグメントに分割し、それぞれのセグメントごとを**26**回ハッシュ関数に通す。（'L'は最後のセグメントのインデックス。）L = security * 27。
-③　②で生成されたすべてのセグメントをまとめてハッシュ関数に通す。その結果得られた値をdigestと呼ぶ。
-④　digestを2回ハッシュ関数に通す。その結果得られた値をアドレスと呼ぶ。
+ First of all, create **Private Key** from **Seed**.
+ 
+ ```js:
+// length = security (1: light client, 2: wallet default, 3: exchange level)
+var key = function(seed, index, length) {
+...
+    return key;    // private key
+}
+ ```
+> 1. have your Private Key ready.
+> 2. divides the Private Key into 'L' segments, where `L = security * 27`.
+> 3. Hash all segments as a whole. The product is called `digest`.
+> 4. Hash `digest` twice. The product is called `address`.
 
 ![address_gen1.png](https://qiita-image-store.s3.amazonaws.com/0/187795/b6e44924-6bc9-71ab-5360-d8db7069879a.png)
-　Private keyはsecurityという引数に代入した1~3の整数の値によって長さを変えることができる。（一応4以上も設計上可能であるが、その分Bundleの署名部分が長くなり、Tangleとのデータ通信効率が悪くなる。[詳細](https://qiita.com/ABmushi/items/0c9f73e08fdb6597ab9c#%E5%85%A5%E5%8A%9B%E9%83%A8---input)）
-
 
 # Signature
 ①　Private Keyを（アドレス生成と同じやり方で）27個のセグメントに分割する。

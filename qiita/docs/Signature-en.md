@@ -157,8 +157,17 @@ i番目のセグメントをNi回ハッシュ関数に通す。
 <img width="184" alt="tryte.png" src="https://qiita-image-store.s3.amazonaws.com/0/187795/e325fe61-7773-8e64-46e0-2e98d66aacf4.png">
 
 
-#参考文献
-IOTA公式ライブラリ [https://github.com/iotaledger](https://github.com/iotaledger)
-本記事はSigningという部分。JavaScriptなら[signing.js](https://github.com/iotaledger/iota.lib.js/blob/master/lib/crypto/signing/signing.js)、Javaなら[Signing.java](https://github.com/iotaledger/iota.lib.java/blob/master/jota/src/main/java/jota/utils/Signing.java)から。
+# Reference
+IOTA iotaledger [https://github.com/iotaledger](https://github.com/iotaledger)
+signing part: JavaScript=>[signing.js](https://github.com/iotaledger/iota.lib.js/blob/master/lib/crypto/signing/signing.js).
+Java=>[Signing.java](https://github.com/iotaledger/iota.lib.java/blob/master/jota/src/main/java/jota/utils/Signing.java).
 
+# About Author
+@abmushi on [twitter](https://twitter.com/), slack
 
+Translated from my original article written in Japanese [here](https://qiita.com/ABmushi/items/ab523d838bf71ca385d4)
+Donation is always welcome and appreciated!
+
+BTC: 1ACGpgpAMgaAKbGpPq2sDa467MnRNdW4wX
+
+IOTA: KWIEEQHAJBJTDPE9WEDILKMVQCJPZSF9CXALYQTULCGNPLIIKJLFYHCWSJNXDALKHAOOTELQUIXWIOFVDPQNXMLBZB

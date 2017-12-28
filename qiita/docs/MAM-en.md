@@ -160,7 +160,7 @@ iota.api.sendCommand({
 　Before encrypting your raw message, MAM includes the **next channel key(`nextChannelKey`)** in your message to be encrypted. If to say in RPG, in the first treasure chest you opened, it's like you would find the key that opens next treasure chest. By repeating this can viewers sequently decrypt next `message` with `nextChannelKey` you obtained from current `message` you have just decrypted. And publisher can give `nextChannelKey` of any points on the channel. That way, you can restrict viewers from viewing the past messages.
  \*`nextChannelKey` can be arbitrary 81 trytes.
 
-![mam_nextKey_1.png](https://qiita-image-store.s3.amazonaws.com/0/187795/035bba8e-d285-3a61-265d-f3fcf9e1b5fc.png)
+![mam_nextKey_1.png](https://github.com/abmushi/iota/blob/master/qiita/docs/mam/mam_1_1.png)
 
 ### Address of the message - `messageID`
 　You might have ever noticed, you have your key but don't have the map that guides you to the treasure chest. In technical term, having `channelKey` or `nextChannelKey` is no use to find where the message is stored. 

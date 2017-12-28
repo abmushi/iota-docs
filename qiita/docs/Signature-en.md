@@ -128,28 +128,19 @@ Signature is used to sign anything(=signed data usually bundle) on tangle that b
 ```
 
 # Risk of Address Reuse
-　先日、IOTA Supportからウォレットの"タングルにアタッチ"機能とセキュリティの関係について[記事](http://iotasupport.com/how-addresses-are-used-in-IOTA.shtml)が出され、個人的にいくつかの疑問点が払拭されたので説明する。まず、署名方法の中のNの求め方を見てほしい。
+ You must have seen the warnings "Do not reuse the address!". But, what's that? And why can't we just simply use same address?
+ Secret is here. Recall:
+> **How to get N**
+> For each *i*-th tryte of the **Signed Data**, get decimal 'd' of the tryte. Converter [here](https://github.com/abmushi/iota/blob/master/qiita/docs/Signature-en.md#tritstryte-to-decimal-table). e.g) tryte[9] corresponds to `d=0`, [A] is to `d=1`...[M] is to `d=13`, L is to `d=-13`...Y is to `d=-2`, Z is to `d=-1`).
+> Formula: *N_i = 13 - d*
 
->**Nの求め方**
-**署名されるデータ（Signed Data）**のi番目のTryteを見る（A〜Zか9、の全27種類）そのTryteが[この表](https://qiita-image-store.s3.amazonaws.com/0/187795/e325fe61-7773-8e64-46e0-2e98d66aacf4.png)のdecimalのどの数字dに対応しているか確認する。（9ならd=0、Aならd=1...Mならd=13、Lならd=-13...Yならd=-2、Zならd=-1）
-*Ni = 13 - d*
-i番目のセグメントをNi回ハッシュ関数に通す。
+ Numbers of hashing depends on i-th tryte of signed data. If signed data contains a lot of 'M', which requires zero hashing. This may result in part of the private key. And in the worst case, your private key is found by malicious brute force attach.
 
-　データ内i番目のトライトがによって、Prvate Key内のi番目のセグメントにハッシュ関数が少なくなる場合がある。例えば**Mなら0回**だ（13-13=0）。もし、署名されるデータがMを多く含むものであった場合、電子署名はPrivate Keyの部分的な生データを総当たりで求められてしまう。つまり、同じアドレスを再利用して様々なデータにそのアドレス名義で署名を行えば行うほど、生のPrivate Keyがハックされてしまう可能性が高まる。
-
-これを防ぐためにすることは、**一度使ったアドレスは二度と使わない。**
-言い換えると、**一度支払いに使ったアドレスに入金しない。**
-厳密に言うと、**一度入力アドレスとして使ったアドレスはもう一度入力アドレスとして使ってはならない。**
-もっと厳密に言うと、**一度署名に使ったPrivate Keyを別の署名に使わない。**
-　技術的なことが分からなくても、とりあえずIOTAで送金をするたびに、ウォレットの"受取"のところからアドレスを生成するだけで防げる。
-
-## 量子計算耐性
-　このような署名メカニズムを採択した背景には量子コンピュータ耐性を持たせると言う目的がある。[Winternitz one-time signature](https://eprint.iacr.org/2011/191.pdf)という論文でこの署名方法について知ることができるらしい。うーん。分からん。[量子コンピュータ耐性があるランポート署名について解説&シェルスクリプトで実装してみた](https://qiita.com/onokatio/items/689965fa484d40d851ce)という記事も参考になるかもしれない。
-
+## Quantum Secure
+ This kind of signing mechanism originates from [Winternitz one-time signature](https://eprint.iacr.org/2011/191.pdf).
 
 # Trits/Tryte to Decimal Table
 <img width="184" alt="tryte.png" src="https://qiita-image-store.s3.amazonaws.com/0/187795/e325fe61-7773-8e64-46e0-2e98d66aacf4.png">
-
 
 # Reference
 IOTA iotaledger [https://github.com/iotaledger](https://github.com/iotaledger)

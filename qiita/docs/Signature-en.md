@@ -53,14 +53,11 @@ Signature is used to sign anything(=signed data usually bundle) on tangle that b
 
  ![singed_data.png](https://qiita-image-store.s3.amazonaws.com/0/187795/f0c3dbb7-503c-51a7-64c3-579162c6fb71.png)
 
-　*Signed Data（署名されるデータ）*は上図のように、data[0]、data[1]、data[2]というNormalized Bundleを分割したものを使う。27セグメントを何回ハッシュに通すかはSigned Dataの27トライトに対応していた。この27トライトが上図のdata[i]である。`security`との関係だが、`security`レベルによってPrivate keyの長さ（`= security * 2187`）は変化し、それによってセグメントの数（`=security*27`）が変化したことを思い出してほしい。`security=2`の場合、セグメント数は54個、つまりdata[0]とdata[1]合わせた54トライトと対応させてセグメントを一つずつN回ハッシュにかける。（Nの求め方は上で説明した。）
-　Bundle生成の話と繋げる。securityによって署名の数が増えた理由は、署名①はdata[0]、署名②はdata[1]、という風に署名されるデータの分担を行なっていたからである。
-　securityが4以上の場合はNormalized Bundleが81トライトという理由で、data[2]の次はdata[0]という風にループさせて署名されるデータを作る。
+　data[0], data[1], data[2], which are components of normailized bundle hash, are used as *Signed Data*. How many times to hash each of 27 segments coressponds to each tryte of 27 trytes signed data. data[i] above is 27 trytes of signed data. if `security = 1`, data[0] is used. if `security = 2`, data[0] and data[1] is used such that in total, 54 trytes are used to sign. (detail above)
+ Recall the when creating bundle, numbers of transactions that store signature depends also on the security level. That was because as security level increases, more data[i] is used to sign.
+ If `security >= 4`, signature is created with data loop: data[3] does not exist so use data[0] again.
 
 ## Normalized Bundle
-　口では説明し難いのでソースコードにコメントをふった。マニアックすぎるので正直言って無視して良い。
-　なるべくトライト表の中間にあるアルファベット(..IJKLMNOP..）を[ABCやXYZ]方面へ寄せバランスを取らせている。しかし、その意義は残念ながら分からない。
-
 ```java:Bundle.java
 /**
      * Normalized the bundle.
@@ -71,38 +68,35 @@ Signature is used to sign anything(=signed data usually bundle) on tangle that b
      */
     public int[] normalizedBundle(String bundleHash) {
 
-        //  normalized Bundle 81トライト。
-        //  これに値を当てはめてreturnする。
+        //  normalized Bundle 81 trytes.
         int[] normalizedBundle = new int[81];
 
-        //  Bundle Hash(81 トライト)を３つのセクションに分割(1つあたり27トライト)
+        //  divides bundle hash into three sections, 27 trytes each.
         for (int i = 0; i < 3; i++) {
-
-            // sum セクションの合計。
+        
             long sum = 0;
 
-            //  1セクション内を１トライトずつ確認し、
-            //  そのトライトに対応する整数[-13~13]を求めてセクションの合計に加えていく。
+            //  check each tryte in a section.
+            //  get corresponding integer [-13~13]. And add it to sum.
             for (int j = 0; j < 27; j++) {
 
-                //  sum += value
-                //  value = normalizedBundleのi*27+j番目のトライト[9~Z]を数字[-13~13]に変換
+                //  sum += value, where
+                //  value = integer value of i*27+j-th tryte
                 sum += 
-                    //  トライトに対応する整数[-13~13]をnormalizedBundleの該当ポジションに代入。
                     (normalizedBundle[i * 27 + j] = 
 
-                        //  トライト[9ABC...Z]を整数[-13~13]に変換
+                        //  Convert tryte[9ABC...Z] into [-13~13]
                         Converter.value(Converter.tritsString("" + bundleHash.charAt(i * 27 + j)))
                     );
             }
 
-            // もし、sumが0以上なら、
+            // if sum of the section >= 0
             if (sum >= 0) {
 
-                //  sumが0になるまで
+                //  until sum = 0
                 while (sum-- > 0) {
 
-                    //  セクション内で[-13]以上のトライトを-1する。一つ-1したら最初から。
+                    //  decrement tryte
                     for (int j = 0; j < 27; j++) {
                         if (normalizedBundle[i * 27 + j] > -13) {
                             normalizedBundle[i * 27 + j]--;
@@ -111,13 +105,13 @@ Signature is used to sign anything(=signed data usually bundle) on tangle that b
                     }
                 }
 
-            //  もし、sumが0以下なら、
+            //  if sum of the section < 0
             } else {
 
-                //  sumが0になるまで
+                //  until sum = 0
                 while (sum++ < 0) {
 
-                    //  セクション内で[13]以下のトライトを+1する。一つ+1したら最初から。
+                    //    increment tryte
                     for (int j = 0; j < 27; j++) {
 
                         if (normalizedBundle[i * 27 + j] < 13) {

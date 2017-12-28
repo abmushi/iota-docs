@@ -21,30 +21,28 @@ var key = function(seed, index, length) {
 ![address_gen1.png](https://qiita-image-store.s3.amazonaws.com/0/187795/b6e44924-6bc9-71ab-5360-d8db7069879a.png)
 
 # Signature
-①　Private Keyを（アドレス生成と同じやり方で）27個のセグメントに分割する。
-②　セグメントごとにN回分ハッシュ関数に通す。
->**Nの求め方**
-**署名されるデータ（Signed Data）**のi番目のTryteを見る（A〜Zか9、の全27種類）そのTryteが[この表](https://qiita-image-store.s3.amazonaws.com/0/187795/e325fe61-7773-8e64-46e0-2e98d66aacf4.png)のdecimalのどの数字dに対応しているか確認する。（9ならd=0、Aならd=1...Mならd=13、Lならd=-13...Yならd=-2、Zならd=-1）
-*Ni = 13 - d*
-i番目のセグメントをNi回ハッシュ関数に通す。
+Signature is used to sign anything(=signed data usually bundle) on tangle that belongs to you with your private key.
 
-③　そのようにしてハッシュ関数で置き換えられたセグメントたちを順番に横に並べたものをSignature（署名）とする。
+> 1. have your Private Key ready.
+> 2. divides the Private Key into 'L' segments, where `L = security * 27`.
+> 3. For each *i*-th segment, hash N_*i* times, where N_*i* is caluculated as folowings:
+> > **How to get N**
+> > For each *i*-th tryte of the **Signed Data**, get decimal 'd' of the tryte. Converter [here](https://qiita-image-store.s3.amazonaws.com/0/187795/e325fe61-7773-8e64-46e0-2e98d66aacf4.png). e.g) tryte[9] corresponds to `d=0`, [A] is to `d=1`...[M] is to `d=13`, L is to `d=-13`...Y is to `d=-2`, Z is to `d=-1`).
+> > Formula: *N_i = 13 - d*
+> 4. Those hashed segments are called **Signature** together.
 
 ![signing1.png](https://qiita-image-store.s3.amazonaws.com/0/187795/303a022c-19ef-fdd9-4125-700f51a8a005.png)
 
-
-
-
 # Validation (address Re-generation )
-①　署名を（アドレス生成と同じやり方で）27個のセグメントに分割する。
-②　セグメントごとにM回分ハッシュ関数に通す。
->**Mの求め方（基本的にNと類似）**
-署名されたデータ（Signed Data）のi番目のTryteを見る（A〜Zか9、の全27種類）そのTryteが[この表](https://qiita-image-store.s3.amazonaws.com/0/187795/e325fe61-7773-8e64-46e0-2e98d66aacf4.png)のdecimalのどの数字dに対応しているか確認する。（9ならd=0、Aならd=1...Mならd=13、Lならd=-13...Yならd=-2、Zならd=-1）
-*Mi = 13+d*
-i番目のセグメントをMi回ハッシュ関数に通す。
-
-③　②で生成されたすべてのセグメントをまとめてハッシュ関数に通す。その結果得られた値をdigestと呼ぶ。
-④　digestを2回ハッシュ関数に通す。その結果得られた値がアドレスと一致したら**承認**される。
+> 1. have your Signature ready.
+> 2. divides the Signature into 'L' segments, where `L = security * 27`.
+> 3. For each *i*-th segment, hash M_*i* times, where M_*i* is caluculated as folowings:
+> > **How to get M** (basically main idea is same as N.)
+> > For each *i*-th tryte of the **Signed Data**, get decimal 'd' of the tryte. Converter [here](https://qiita-image-store.s3.amazonaws.com/0/187795/e325fe61-7773-8e64-46e0-2e98d66aacf4.png). e.g) tryte[9] corresponds to `d=0`, [A] is to `d=1`...[M] is to `d=13`, L is to `d=-13`...Y is to `d=-2`, Z is to `d=-1`).
+> > Formula: *M_i = 13 + d*
+> 4. Hash those segment together and get `digest`.
+> 5. Hash the `digest` twice.
+> 6. Check if the product of step 5 matches the address of the signed data(usually Bundle).
 
 ![validate1.png](https://qiita-image-store.s3.amazonaws.com/0/187795/e4f2e7de-2a46-e25e-4fe9-25a024ad7eba.png)
 

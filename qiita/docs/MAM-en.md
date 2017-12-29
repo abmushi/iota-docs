@@ -218,9 +218,10 @@ Merkle Tree of MAM is generated from seed. (What a surprise that seed grows up t
 ### Secret Key and Public Key
 　Publisher(Seed owner) has to make Private Keys, A,B,C,D confidential. But, `root` and `siblings` are public keys, because you can still achieve your private key's safety. Because, only the seed owner, or to say Merkle Tree owner, can calculate `root` from public information. Other cannot generate `root`. Yes, they know what the `root` is, but they don't know how to generate. To illustrate, using the example above, other people must have a **leaf `A'`** to generate `root` by combining it with also public `siblings`. This way, you can distinguish correct owner of the merkle tree from other folks.
  
-　![mam_2_merkle_pubkey.png](https://github.com/abmushi/iota/blob/master/qiita/docs/mam/mam_2_2.png)
-　
-　This technic is magically used in MAM to prove ownership of the message chain.
+![mam_2_merkle_pubkey.png](https://github.com/abmushi/iota/blob/master/qiita/docs/mam/mam_2_2.png)
+
+
+This technic is used in MAM magically to prove ownership of the message chain.
 
 # Behind MAM - Signature and Validation
 　In this chapter, I'm going to merge two major topics discussed so far:
@@ -236,7 +237,7 @@ source [here](https://github.com/iotaledger/mam.client.js/blob/master/lib/mam.js
 　The first tree namely `tree0`, has `start0 = start`,`size0 = size`. Second tree `tree1` starts with `start1 = srart0 + size0`, `size1 - size0`. Second tree uses next sequence of the private keys. Figure below.
  
 ![mam_2_double_merkle.png](https://github.com/abmushi/iota/blob/master/qiita/docs/mam/mam_2_3.png)
-　
+
   When creating MAM,`tree0` itself and the root of `tree1`, namely `root_1`(**nextRoot**) is one of the parameters. And **leaf index** is chosen from **0 < i <size**. Let's say in this case, `leaf_index = 0`. Leaf index of the merkle tree is the distance from the most left leaf. leaf_index '0' of `tree0` is `A'`, leaf_index `2` of `tree1` is `G'`.
   
 ```java:example of MAM.create
@@ -274,7 +275,7 @@ In this example, `root_0` of `tree0` and `channelKey` is given to viewers so tha
 　Bob calculates `messageID` from given `channelKey` to find where Alice's message is being stored. Then, decrypt found message with `channelKey`.
 　Next, he validates signature of the message with `messageTrytes` as signed data. Forgot how to validate signature? Explained [here](https://github.com/abmushi/iota/blob/master/qiita/docs/Signature-en.md#validation-address-re-generation-).
 
-　![mam_2_sig_address.png](https://github.com/abmushi/iota/blob/master/qiita/docs/mam/mam_2_8.png)
+![mam_2_sig_address.png](https://github.com/abmushi/iota/blob/master/qiita/docs/mam/mam_2_8.png)
 ### Ownership Verification
 　After validation of th signature, Bob gets an address. He uses the address as a leaf at `leaf_index` of the merkle tree. Then with given `siblings` in the message, he finds `root` of the merkle tree. If this `root` matches the root Alice told him, the decrypted message is proved to be made by Alice.
 ![mam_2_address_merkle.png](https://github.com/abmushi/iota/blob/master/qiita/docs/mam/mam_2_5.png)
@@ -312,7 +313,8 @@ Writen in Chinese：[MAM　筆記](https://hackmd.io/c/rkpoORY4W/%2Fs%2FrJkpIrrb
 # About Author
 @abmushi on [twitter](https://twitter.com/), slack
 
-Translated from my original article written in Japanese [here](https://qiita.com/ABmushi/items/ab523d838bf71ca385d4)
+Translated from my original article written in Japanese [here](https://qiita.com/ABmushi/items/ab523d838bf71ca385d4).
+
 Donation is always welcome and appreciated!
 
 BTC: 1ACGpgpAMgaAKbGpPq2sDa467MnRNdW4wX

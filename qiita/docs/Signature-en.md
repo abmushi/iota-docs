@@ -6,7 +6,7 @@ IOTA:Signature And Validation
 # Address generation
  First of all, create **Private Key** from **Seed**.
  
- ```js:
+ ```javascript:
 // length = security (1: light client, 2: wallet default, 3: exchange level)
 var key = function(seed, index, length) {
 ...

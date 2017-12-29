@@ -105,7 +105,7 @@ const iota = new IOTA({
   provider: 'http://localhost:14600'
 });
 
-//  シード
+//  seed
 const seed = 'PAUL9NOZTUVHPBKLTFVRJZTOPODGTYHRUIACDYDKRNAQMCUZGNWMDSDZMPWHKQINYFPYTIEDSZ9EJZYOD';
 const channelKeyIndex = 3;
 

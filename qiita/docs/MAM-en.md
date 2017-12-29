@@ -193,7 +193,7 @@ iota.api.sendCommand({
 
 ## Channel's Ownership
 　The problems mentioned above could simply be summarized as:**Chennel Key implimentation cannot identify who of Alice and Bob owns messages.**
-　Now recall how the address of IOTA is signed by its correct owner. Seedから生成される**Private Key**で[署名](https://qiita.com/ABmushi/items/422d1bf94be0c919583a#%E7%BD%B2%E5%90%8D%E3%81%AE%E6%96%B9%E6%B3%95)したトランザクションが承認されることで残高を引き出すことができた。
+　Now recall how the address of IOTA is signed by its correct owner.
 　MAM uses technic that utilizes both Private Key and Merkle Tree scheme to prove ownership of the channel.
 
 ## Merkle tree based signature scheme 
@@ -255,7 +255,7 @@ const mam = new MAM.create({
  Firstly, create **siblings** of `tree0` with `index = leaf_index`. In this case, `leaf_index = 0`, so `siblings` are `B"` and `Hash(C"D")`. 
 ![mam_2_small_sib.png](https://github.com/abmushi/iota/blob/master/qiita/docs/mam/mam_2_4.png)
 
- Nextly, make a signature, where `messageTrytes` that are composite of `nextRoot` and raw_message as signed data, and private key of `leaf_index` as signing key. 署名作成については[こちら](https://qiita.com/ABmushi/items/422d1bf94be0c919583a#%E7%BD%B2%E5%90%8D%E3%81%AE%E6%96%B9%E6%B3%95)
+ Nextly, make a signature, where `messageTrytes` that are composite of `nextRoot` and raw_message as signed data, and private key of `leaf_index` as signing key. Forgot how to sign? Explained [here](https://github.com/abmushi/iota/blob/master/qiita/docs/Signature-en.md#signature)
  
 ![mam_2_sig2.png](https://github.com/abmushi/iota/blob/master/qiita/docs/mam/mam_2_7.png)
 
@@ -272,7 +272,7 @@ source [here](https://github.com/iotaledger/mam.client.js/blob/master/lib/mam.js
 
 In this example, `root_0` of `tree0` and `channelKey` is given to viewers so that they can understand A's first published message. Now, assume that Bob has been given both `root_0` and `chennelKey`.
 　Bob calculates `messageID` from given `channelKey` to find where Alice's message is being stored. Then, decrypt found message with `channelKey`.
-　Next, he validates signature of the message with `messageTrytes` as signed data.署名の承認の仕方は[こちら](https://qiita.com/ABmushi/items/422d1bf94be0c919583a#%E6%89%BF%E8%AA%8D%E3%81%AE%E6%96%B9%E6%B3%95%E3%82%A2%E3%83%89%E3%83%AC%E3%82%B9%E3%81%AE%E9%80%86%E7%94%9F%E6%88%90)。
+　Next, he validates signature of the message with `messageTrytes` as signed data. Forgot how to validate signature? Explained [here](https://github.com/abmushi/iota/blob/master/qiita/docs/Signature-en.md#validation-address-re-generation-).
 
 　![mam_2_sig_address.png](https://github.com/abmushi/iota/blob/master/qiita/docs/mam/mam_2_8.png)
 ### Ownership Verification

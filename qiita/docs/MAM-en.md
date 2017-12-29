@@ -254,6 +254,7 @@ const mam = new MAM.create({
  So, what's going to happen in MAM.create then?
  
  Firstly, create **siblings** of `tree0` with `index = leaf_index`. In this case, `leaf_index = 0`, so `siblings` are `B"` and `Hash(C"D")`. 
+
 ![mam_2_small_sib.png](https://github.com/abmushi/iota/blob/master/qiita/docs/mam/mam_2_4.png)
 
  Nextly, make a signature, where `messageTrytes` that are composite of `nextRoot` and raw_message as signed data, and private key of `leaf_index` as signing key. Forgot how to sign? Explained [here](https://github.com/abmushi/iota/blob/master/qiita/docs/Signature-en.md#signature)

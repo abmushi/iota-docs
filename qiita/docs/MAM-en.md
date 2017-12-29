@@ -229,7 +229,8 @@ This technic is used in MAM magically to prove ownership of the message chain.
 >2. Merkle Tree
 
 ## MAM.create
-source [here](https://github.com/iotaledger/mam.client.js/blob/master/lib/mam.js#L63)
+source [here](https://github.com/iotaledger/mam.client.js/blob/master/lib/mam.js#L63).
+
 　Alice opens Channel. Alice then has to:
 >1. generate `channelKey`.
 >2. generate two Merkle Trees of same `size`. The first one starts with the index `start`.
@@ -265,7 +266,8 @@ const mam = new MAM.create({
 ![mam_2_overview_single.png](https://github.com/abmushi/iota/blob/master/qiita/docs/mam/mam_2_6.png)
 
 ## MAM.parse
-source [here](https://github.com/iotaledger/mam.client.js/blob/master/lib/mam.js#L131)
+source [here](https://github.com/iotaledger/mam.client.js/blob/master/lib/mam.js#L131).
+
 　So, how we parse this message?
 ### Tell both `channelKey` and `root` to viewers
 >**chennelKey** is used to decrypt message, and for generating `address`.

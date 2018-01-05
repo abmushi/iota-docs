@@ -18,7 +18,7 @@ stringified2 = json.dumps(command2)
 headers = {
     'content-type': 'application/json',
 }
-local_url ="http://localhost:14600"
+local_url ="http://localhost:14265"
 
 request1 = urllib2.Request(url=local_url, data=stringified1, headers=headers)
 request2 = urllib2.Request(url=local_url, data=stringified2, headers=headers)

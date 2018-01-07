@@ -18,7 +18,7 @@ var key = function(seed, index, length) {
 > 3. Hash all segments as a whole. The product is called `digest`.
 > 4. Hash `digest` twice. The product is called `address`.
 
-![address_gen1.png](https://qiita-image-store.s3.amazonaws.com/0/187795/b6e44924-6bc9-71ab-5360-d8db7069879a.png)
+![address_gen.png](https://github.com/abmushi/iota/blob/master/qiita/docs/sig/address_gen.png)
 
 # Signature
 Signature is used to sign anything(=signed data usually bundle) on tangle that belongs to you with your private key.

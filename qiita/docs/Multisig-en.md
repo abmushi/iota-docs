@@ -113,24 +113,22 @@ digest:  OUHUMCXMVPJVCKKKNRJLZXMXKVFWDNPGDUKDKJCQFEXFXYDNFLJQHCEAPFCZVNFPCIJITBP
 
 ![address_gen2.png](https://qiita-image-store.s3.amazonaws.com/0/187795/b1952c83-5e2b-ee36-e53f-9bf56860037a.png)
 
-　*マルチシグ（複数署名）*はこの**どんな長さ（81の倍数）のdigestからでもランダムな81トライトのアドレスが生成される**という特徴を生かして、他の普通の送金と見分けがつかない形でTangleに取引を書き込むことができる。
+　Multisig makes use of nature that **final address being generated is always length of 81 trytes no matter long the original digest is.**
 
-# マルチシグ大解剖
-　さて、今まで見てきたのは前哨戦。普通のアドレスがどう生成されるかだ。ここからついにマルチシグの話に移る。
-## マルチシグアドレス
-　マルチシグの例を考える際に今回は二人の署名責任のあるAさんとBさんがいると考える。二人はそれぞれ異なるSeedを所有していて互いに相手のSeedを知らない。
-　まず、この二人で共同管理する**マルチシグアドレス**というものを生成する。呼び方が違うとはいってもマルチシグアドレスは81トライトの文字列で、端から見ても普通のアドレスと全く同じである。
- しかし、違うのはその生成方法だ。まず、マルチシグアドレス生成に使われるのは**二人のdigestだ**。Aさん、Bさんそれぞれが任意に`index`、`security`を選んでdigestを生成する。
+# Multisig Implementaion
+　Now we start looking at how multisig works.
+## Multisig Address
+　For instance, as a setting, let's say Alice and Bob want to create an account, which both of them are responsible of the balance. They have own unique seed neighther of them know other's.
+　First of all, they generate the address called **Multisig Address**, which looks normal address of 81 trytes from any tangle viewers, but is generated in different way. When generating multisig address(of two people in this case), **two digests of each Alice's and Bob's** are used. And for each of them, they choose their own `index`, and `security` level individually to submit their digest.
 ![twoDigests.png](https://qiita-image-store.s3.amazonaws.com/0/187795/c543339b-2475-6c27-f9ff-3f77e367397e.png)
-　重要なのはこの二人のdigestは互いに見せ合って良いことだ。二人のアイデンティティであるSeed、またPrivate Keyは秘密にしておく代わりに、このdigestを共同管理の証として見せ合う。
-　次に、この集まった２つのdigestを単純に文字列の足し算（繋げる）をする。（足した結果できたdigestは外から見ると`security=5`のdigestに見える。）そして、その１つにまとまったdigestを普通のdigestをアドレスにしたのと同じ方法でアドレスにする。
+　Note that they can share their digests freely. But, never share seeds as always. 
+　Next, concatinate those submitted two digests to create one digest of double length. This new digest looks digest of `security=5`. Then using same method as used in normal address generation, hash the digest to create an address out of it.
 ![twoDigests2.png](https://qiita-image-store.s3.amazonaws.com/0/187795/cca2edf6-3de1-1edf-b89d-205b43d3a9d6.png)
-　こうして完成したのがマルチシグアドレスである。二つの異なるSeedから異なる長さのdigestを作って足し合わせてできた長い１つのdigestを81トライトのアドレスにする。これが一連の流れである。
-　もちろん、三人以上のdigestを集めれば複数人で管理するアドレスを生成できる。
-## マルチシグの署名
-　では、この生成したマルチシグアドレスに100[Gi]という大金を送ったとしよう。（マルチシグアドレスに送金するプロセスはいつも通り。普通のウォレットからできる。）
-　異なるのは、マルチシグアドレスの**残高を使う**ときだ。残高を引き落とす際には必ず署名が必要になる。マルチシグというくらいなのでこの署名を複数人で行う。
-　では、まずBundleを生成しよう。今回は例として50[Gi]をアドレスxxxに支払う（出力）とする。そして、その50[Gi]の調達元（入力）として先ほどのマルチシグアドレス（BID...）を指定する。また、普通の個人署名取引とは違い、マルチシグアドレスから引き出した後のお釣り用の差額出力アドレスは手動で作る必要がある。その際は再度二人それぞれがさっきと違う`index`からdigestを出して、マルチシグアドレスを生成するか、もちろんもうマルチシグアドレスに出力しなくていい場合は、普通のアドレスを指定してもいい。少なくとも普通の送金とは違って差額出力用アドレス生成は自動ではない。
+　This address is **Multisig Address**. In summary, Two different digests, each of which created from two different seeds, concatinated together is seen as one digest. And generate address from the digest.
+　Of course, if you concatinate more than two digests, you can generate the address that requires more than two people to sign.
+## Signing Multisig Address
+　Let's assume we send 100[Gi] (big amount!) to this address. Sending to multisig address is just as same as ordinary sending. The difference is in sending(spending) from multisig address. Spending from any address requires signature. And multisig address by its name requires several co-singers.
+　Let's make transfer bundle. In this short example reveiver address is "xxx". And we send 50[Gi] to "xxx". And this 50[Gi] comes from the multisig address's balance(BID...). では、まずBundleを生成しよう。今回は例として50[Gi]をアドレスxxxに支払う（出力）とする。そして、その50[Gi]の調達元（入力）として先ほどのマルチシグアドレス（BID...）を指定する。また、普通の個人署名取引とは違い、マルチシグアドレスから引き出した後のお釣り用の差額出力アドレスは手動で作る必要がある。その際は再度二人それぞれがさっきと違う`index`からdigestを出して、マルチシグアドレスを生成するか、もちろんもうマルチシグアドレスに出力しなくていい場合は、普通のアドレスを指定してもいい。少なくとも普通の送金とは違って差額出力用アドレス生成は自動ではない。
 　署名はそれぞれが各々の**Private Key**から生成する。署名作成方法は[以前の解説](https://qiita.com/ABmushi/items/422d1bf94be0c919583a#%E7%BD%B2%E5%90%8D%E3%81%AE%E6%96%B9%E6%B3%95)と変わらない。署名されるデータは先ほど作成したBundleのハッシュ（正確にはNormalized Bundle Hash）。二人が同じBundleハッシュに対して署名する。（Bundleハッシュの計算には`signatureFragment`は使われない。）
 　![sig.png](https://qiita-image-store.s3.amazonaws.com/0/187795/99f1c4be-aaa4-c16e-40d4-4a8435ae4662.png)
 　結果、二人分の署名が作成される。今回、Aさんの`security`は`2`、Bさんは`3`だったので、Aさんの署名は`4372`トライト、Bさんの署名は`6561`トライトになる。この合計`10935`トライトの署名をBundleの**入力部**の`signatureFragment`に保管する。[\*詳細](https://qiita.com/ABmushi/items/0c9f73e08fdb6597ab9c#%E5%85%A5%E5%8A%9B%E9%83%A8---input)。

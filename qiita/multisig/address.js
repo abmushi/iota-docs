@@ -2,8 +2,6 @@ var IOTA = require('../lib/iota');
 var Signing = require('../lib/crypto/signing/signing');
 var Converter = require('../lib/crypto/converter/converter');
 var Utils = require('../lib/utils/utils')
-var crypto = require("crypto");
-var fs = require('fs');
 var rl = require('readline-sync');
 
 //	オフラインでも動く。

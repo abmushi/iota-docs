@@ -21,7 +21,7 @@ const seeds = function(){
 
 	var seed,security;
 	for(var i = 0;i<numOfSeed;i++){
-		seed = rl.questionNewPassword('Seed: ',{charlist:'$<A-Z>9',mask:'#',min:81,max:81});
+		seed = rl.questionNewPassword('Seed['+(i+1)+'/'+(numOfSeed)+']: ',{charlist:'$<A-Z>9',mask:'#',min:81,max:81});
         security = rl.questionInt('Security(1~3): ');
 
         if(security < 1){

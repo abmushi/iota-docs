@@ -7,7 +7,7 @@
 ## 使い方
 iota.lib.jsをダウンロードし、その中の/example/のディレクトリ内にこのコードを保管し、`node address.js`で実行すればOK。
 
-なお、`npm install readline-sync`で必要ライブラリ`readline-sync`をインストールしておく必要がある。[詳細](https://www.npmjs.com/package/readline-sync/tutorial)
+なお、`npm install readline-sync`で必要パッケージ`readline-sync`をインストールしておく必要がある。[詳細](https://www.npmjs.com/package/readline-sync/tutorial)
 
 ```shell
 いくつのSeedを使用しますか? ( 1 以上): 3

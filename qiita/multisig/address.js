@@ -30,7 +30,14 @@ const seeds = function(){
 
         obj.seeds.push({"seed":seed,"security":security});
 
-        console.log('- Seedは必ずオフラインで保管しましょう。');
+        console.log('- 注意 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -');
+        console.log(' - Seedは必ずオフラインで保管しましょう。Seedを失くすと資産を消失します。');
+        console.log(' - Securityの値も忘れないようにしましょう。');
+        console.log('- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ');
+	}
+
+	if(numOfSeed > 1){
+		console.log('- 注意：２個以上のSeedをどの順番で入力したかも忘れないでください。');
 	}
 
 	obj.index = rl.questionInt('current index: ');

@@ -1,5 +1,6 @@
 
 # address.js
+[ソース](https://github.com/abmushi/iota/blob/master/qiita/multisig/address.js)
 　Seedを複数用意してマルチシグアドレスを生成する。
  
 >SeedやSecurityの値は保存されないので安全だが、その分自己責任でSeedは保管する必要がある。

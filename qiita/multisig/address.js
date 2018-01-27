@@ -1,7 +1,7 @@
-//  This file should be placed at iota.lib.js/example/
 var IOTA = require('../lib/iota');
 var Signing = require('../lib/crypto/signing/signing');
 var Converter = require('../lib/crypto/converter/converter');
+var Utils = require('../lib/utils/utils')
 var crypto = require("crypto");
 var fs = require('fs');
 var rl = require('readline-sync');
@@ -13,7 +13,7 @@ var iota = new IOTA();
 const seeds = function(){
 	obj = {};
 
-	var numOfSeed = rl.questionInt('How many seeds? ( 1 以上)');
+	var numOfSeed = rl.questionInt('いくつのSeedを使用しますか? ( 1 以上): ');
 
 	if(numOfSeed < 1){
 		return null;
@@ -32,7 +32,7 @@ const seeds = function(){
 
         obj.seeds.push({"seed":seed,"security":security});
 
-        console.log('- Make sure you have HAND-WRITTEN your SEED!!');
+        console.log('- Seedは必ずオフラインで保管しましょう。');
 	}
 
 	obj.index = rl.questionInt('current index: ');
@@ -65,8 +65,9 @@ const next = function(login,currentIndex){
 	var isValid = iota.multisig.validateAddress(address, digestList);
 	if(isValid){
 		console.log('- - - - - - - - - - - - - - - - - - - - ');
-		console.log(' - index: ',currentIndex);
-		console.log(' - address: ',address);
+		console.log(' - index              : ',currentIndex);
+		console.log(' - address            : ',address);
+		console.log(' - address + checksum : ',Utils.addChecksum(address));
 		console.log('- - - - - - - - - - - - - - - - - - - - ');
 	}else{
 		console.log('Error: Invalid address.');

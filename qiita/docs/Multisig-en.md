@@ -148,9 +148,9 @@ digest:  OUHUMCXMVPJVCKKKNRJLZXMXKVFWDNPGDUKDKJCQFEXFXYDNFLJQHCEAPFCZVNFPCIJITBP
 　And order matters. In this example, digest of Alice comes prior to digest of Bob, so signature should correspond to it.
 
 ## Validate Multisig
-　承認は簡単だ。というのも単純に普通の送金の`security`が高いバージョンと考えればいいからだ。承認プロセスは[ここ](https://qiita.com/ABmushi/items/422d1bf94be0c919583a#%E6%89%BF%E8%AA%8D%E3%81%AE%E6%96%B9%E6%B3%95%E3%82%A2%E3%83%89%E3%83%AC%E3%82%B9%E3%81%AE%E9%80%86%E7%94%9F%E6%88%90)の説明通り。最後に返されるアドレスが入力アドレス（今回の例ならBIDSBA...）と一致すれば承認される。
+　Validating is a piece of cake. On Tangle, multisig bundle being attached seems just as same as the one created from single signature. Only differences are the length of the signature. As seen in single signature, where different `security` level creates different length of the signature(`security times 2187 Trytes`), multisig bundle of, let's say, three people of `security=3,3,2` can be treated as single sig of `security=3+3+2=8` bundle when being validated. 
 
-# 実際にやってみる
+# Practice
 公式のコードは[こちら](https://github.com/iotaledger/iota.lib.js/blob/master/examples/multisig.js)。この章ではこれを参考にしていく。
 ## マルチシグアドレス生成
 ```js:multisig.js

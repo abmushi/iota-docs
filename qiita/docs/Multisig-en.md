@@ -13,7 +13,7 @@ IOTA:Underlying Concept and Implementation of Multisig.
 
 # Address generation in depth
 　The most essential idea in creating multisig transfer comes from the very basic of address generation mechanism. Especially, 'security' parameter is closely related and applied to multisig. Below is instannt overview of generating address.
-![address_gen.png](https://qiita-image-store.s3.amazonaws.com/0/187795/32f5c256-c5d6-30a5-42d8-e9bdd7397917.png)
+![address_gen2.png](https://github.com/abmushi/iota/blob/master/qiita/docs/sig/address_gen2.png)
 　Address is only the final product that comes from Seed、Private Key、through digests.
 
 ## Private Key
@@ -137,12 +137,12 @@ digest:  OUHUMCXMVPJVCKKKNRJLZXMXKVFWDNPGDUKDKJCQFEXFXYDNFLJQHCEAPFCZVNFPCIJITBP
 　Let's create transfer bundle. In this short example reveiver address is "xxx". And we send 50[Gi] to "xxx". And this 50[Gi] comes from the multisig address's balance(BID...). And remainder address which is used to send change amount to is not generated automatically in multisig transfer, because to generate next address one needs to have several digests from different people. So, before transfer value from multisig address input, make sure that all next digests with next `index` of co-signers are ready to create next address. Also, if you no longer need your change value to be sent to multisig address, you can specify any normal address. 
 　Signature is generated from own private key. This procedure is no different from of normal signing, which is explained in this [article](https://github.com/abmushi/iota/blob/master/qiita/docs/Signature-en.md#signature). Signed data is generated bundle hash(strictly speaking, normalized bundle hash). Co-signers create signature of same bundle hash. 
  
-　![sig.png](https://qiita-image-store.s3.amazonaws.com/0/187795/99f1c4be-aaa4-c16e-40d4-4a8435ae4662.png)
+　![multisig_en3.png](https://github.com/abmushi/iota/blob/master/qiita/docs/multisig/multisig_en3.png)
  
 　Now we have co-signers' signature, two signatures in total. In this example, Alice is `security=2` and Bob is `security=3`, so Alice's signature is of `4372` trytes, and `6561` trytes for bob's. Totally, `10935 (=4372+6561)` trytes are stored in five `signatureFragment` of transaction objects in the bundle. (five comes from 5 = 10935/2187, where each `signatureFragment` of one transaction object is 2187 trytes.) [\*詳細](https://qiita.com/ABmushi/items/0c9f73e08fdb6597ab9c#%E5%85%A5%E5%8A%9B%E9%83%A8---input)。
 　Below is overview of the final bundle.
  
-![bundle.png](https://qiita-image-store.s3.amazonaws.com/0/187795/b9e9bad2-17fd-2e20-fb64-82c8689c91f7.png)
+![multisig_en4.png](https://github.com/abmushi/iota/blob/master/qiita/docs/multisig/multisig_en4.png)
 
 　The figure above, each signature is colored just for visual friendly purpose. On acutual tangle, viewers cannot distinguish `security=5` normal signature from `security=2` and `security=3` multisignature, and two `security=2` and one `security=1` multisignature.
 　And order matters. In this example, digest of Alice comes prior to digest of Bob, so signature should correspond to it.

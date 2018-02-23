@@ -157,12 +157,12 @@ JavaScript=>[signing.js](https://github.com/iotaledger/iota.lib.js/blob/master/l
 Java=>[Signing.java](https://github.com/iotaledger/iota.lib.java/blob/master/jota/src/main/java/jota/utils/Signing.java).
 
 # About Author
-@abmushi on [twitter](https://twitter.com/), slack
+@abmushi on [twitter](https://twitter.com/abmushi), discord
 
 Translated from my original article written in Japanese [here](https://qiita.com/ABmushi/items/ab523d838bf71ca385d4)
 
 Donation is always welcome and appreciated!
 
-BTC: 1ACGpgpAMgaAKbGpPq2sDa467MnRNdW4wX
+BTC: `1ACGpgpAMgaAKbGpPq2sDa467MnRNdW4wX`
 
-IOTA: KWIEEQHAJBJTDPE9WEDILKMVQCJPZSF9CXALYQTULCGNPLIIKJLFYHCWSJNXDALKHAOOTELQUIXWIOFVDPQNXMLBZB
+IOTA: `KWIEEQHAJBJTDPE9WEDILKMVQCJPZSF9CXALYQTULCGNPLIIKJLFYHCWSJNXDALKHAOOTELQUIXWIOFVDPQNXMLBZB`

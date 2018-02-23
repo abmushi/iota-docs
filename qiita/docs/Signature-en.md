@@ -51,15 +51,16 @@ Signature is used to sign anything(=signed data usually bundle) on tangle that b
 ![validate1.png](https://github.com/abmushi/iota/blob/master/qiita/docs/sig/val.png)
 
 # Signed Data
-　Signature is used to sign your input address when you spend. And signature is stored in the bundle that spends the signed input. Signature data (length = security * 2187 tryte) is stored at `signatureFragment`. (Note that `signatureFragment`'s capacity is 2187 tryte, so the larger security, the more transactions for storing signature are necessary to be included in the bundle.)
- Signed data mentioned above refers to the bundle hash (81 tryte) that includes the signature.
- （Strictly speaking, signed data is called normalized bundle hash, which is slightly incremented bundle hash.）
+　Signature is used to sign your input address you spend. And signature is stored in the bundle that spends the signed input. Signature data (length = security * 2187 tryte) is stored in `signatureFragment`. (Note that `signatureFragment`'s capacity is 2187 tryte, so the larger security, the more transactions for storing signature are necessary to be included in the bundle.)
+ 
+  Signed data mentioned above refers to the bundle hash (81 tryte) that includes the signature.（Strictly speaking, signed data is called `normalized bundle hash`, which is slightly incremented bundle hash such that total exposure of the private key would be half.）
 
  ![singed_data.png](https://github.com/abmushi/iota/blob/master/qiita/docs/sig/norm.png)
 
 　data[0], data[1], data[2], which are components of normailized bundle hash, are used as *Signed Data*. How many times to hash each of 27 segments coressponds to each tryte of 27 trytes signed data. data[i] above is 27 trytes of signed data. if `security = 1`, data[0] is used. if `security = 2`, data[0] and data[1] is used such that in total, 54 trytes are used to sign. (table above)
  Recall the when creating bundle, numbers of transactions that store signature depends also on the security level. That was because as security level increases, more data[i] is used to sign.
- If `security >= 4`, signature is created with data loop: data[3] does not exist so use data[0] again.
+ 
+ Even though API raises error, `security >= 4` is allowed in protocol (i.e. transaction is confirmed), in this case, data[3] does not exist so use data[0] again and so on.
 
 ## Normalized Bundle
 ```java:Bundle.java

@@ -140,7 +140,7 @@ Signature is used to sign anything(=signed data usually bundle) on tangle that b
 >
 > Formula: *N_i = 13 - d*
 
- Number of hashings depends on i-th tryte of signed data. If signed data contains a lot of 'M', which requires zero hashing. This may result in part of the private key. And in the worst case, your private key is found by malicious brute force attach.
+ Number of hashings depends on i-th tryte of signed data. If signed data contains a lot of 'M', which requires zero hashing. This may result in the exposure of the part of your raw private key. 
 
 ## Quantum Secure
  This kind of signing mechanism originates from [Winternitz one-time signature](https://eprint.iacr.org/2011/191.pdf).

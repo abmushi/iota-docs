@@ -14,7 +14,7 @@
 ## Problems and suggestion
  
 ### 1. Too long mam chain
- if too many documents are being downloaded from Alice, Alice's mam chain is going to be too long that Alice might have to take forever to traverse all of MAM channel's message to reach `root` Charlie wants authentication.
+ if too many documents are being downloaded from Alice, Alice's mam chain is going to be too long. Alice might have to take forever to traverse all of MAM channel's message to reach `root` Charlie is looking for.
 
  So, metadata should also include `index` of private key that is used to calculate `root`.
  
